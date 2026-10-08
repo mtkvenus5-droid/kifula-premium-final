@@ -163,90 +163,78 @@ function App() {
   }
 
   const generatePdf = () => {
-    const doc = new jsPDF({ unit: 'mm', format: 'a4' })
+    try {
+      const doc = new jsPDF({ unit: 'mm', format: 'a4' })
 
-    const pageWidth = doc.internal.pageSize.getWidth()
-    const pageHeight = doc.internal.pageSize.getHeight()
+      const pageWidth = doc.internal.pageSize.getWidth()
+      const pageHeight = doc.internal.pageSize.getHeight()
 
-    doc.setFillColor(13, 41, 77)
-    doc.rect(0, 0, pageWidth, 54, 'F')
+      doc.setFillColor(13, 41, 77)
+      doc.rect(0, 0, pageWidth, 54, 'F')
 
-    const badge = buildSchoolBadge(selectedSchool.name, selectedSchool.color)
-    doc.addImage(badge, 'PNG', 18, 18, 26, 26)
+      const badge = buildSchoolBadge(selectedSchool.name, selectedSchool.color)
+      try {
+        doc.addImage(badge, 'PNG', 18, 18, 26, 26)
+      } catch (e) {
+        console.warn('Erro ao adicionar imagem do badge:', e)
+      }
 
-    doc.setTextColor(255, 255, 255)
-    doc.setFontSize(20)
-    doc.text('KIFULA PREMIUM', 52, 28)
-    doc.setFontSize(11)
-    doc.text('Sistema de geração e validação de trabalho escolar', 52, 36)
-    doc.text(selectedSchool.name, 52, 44)
+      doc.setTextColor(255, 255, 255)
+      doc.setFontSize(20)
+      doc.text('KIFULA PREMIUM', 52, 28)
+      doc.setFontSize(11)
+      doc.text('Sistema de geração e validação de trabalho escolar', 52, 36)
+      doc.text(selectedSchool.name, 52, 44)
 
-    doc.setDrawColor(255, 255, 255)
-    doc.setLineWidth(0.4)
-    doc.line(18, 58, pageWidth - 18, 58)
+      doc.setDrawColor(255, 255, 255)
+      doc.setLineWidth(0.4)
+      doc.line(18, 58, pageWidth - 18, 58)
 
-    doc.setTextColor(17, 24, 39)
-    doc.setFontSize(18)
-    doc.text(form.title, 18, 74)
-    doc.setFontSize(11)
-    doc.text(`Aluno: ${form.studentName}`, 18, 87)
-    doc.text(`Disciplina: ${form.discipline}`, 18, 94)
-    doc.text(`Classe: ${form.classLevel}`, 18, 101)
-    doc.text(`Escola: ${form.schoolName}`, 18, 108)
-    doc.text(`Professor(a): ${form.teacherName}`, 18, 115)
+      doc.setTextColor(17, 24, 39)
+      doc.setFontSize(18)
+      doc.text(form.title, 18, 74)
+      doc.setFontSize(11)
+      doc.text(`Aluno: ${form.studentName}`, 18, 87)
+      doc.text(`Disciplina: ${form.discipline}`, 18, 94)
+      doc.text(`Classe: ${form.classLevel}`, 18, 101)
+      doc.text(`Escola: ${form.schoolName}`, 18, 108)
+      doc.text(`Professor(a): ${form.teacherName}`, 18, 115)
 
-    const introText = doc.splitTextToSize(form.summary, 160)
-    doc.text(introText, 18, 130)
+      const introText = doc.splitTextToSize(form.summary, 160)
+      doc.text(introText, 18, 130)
 
-    doc.setFontSize(13)
-    doc.text('Introdução', 18, 150)
-    doc.setFontSize(11)
-    const introBody = doc.splitTextToSize('Neste trabalho, será apresentado um estudo crítico com foco em contextualização, objetivos, desenvolvimento e conclusões relevantes para o tema escolhido.', 160)
-    doc.text(introBody, 18, 158)
+      doc.setFontSize(13)
+      doc.text('Introdução', 18, 150)
+      doc.setFontSize(11)
+      const introBody = doc.splitTextToSize('Neste trabalho, será apresentado um estudo crítico com foco em contextualização, objetivos, desenvolvimento e conclusões relevantes para o tema escolhido.', 160)
+      doc.text(introBody, 18, 158)
 
-    doc.setFontSize(13)
-    doc.text('Desenvolvimento', 18, 182)
-    doc.setFontSize(11)
-    const devBody = doc.splitTextToSize('O tema ressalta a importância da interação entre teoria e prática, destacando a relevância do contexto escolar angolano, os desafios reais de implementação e as soluções adequadas para uma educação mais eficaz.', 160)
-    doc.text(devBody, 18, 190)
+      doc.setFontSize(13)
+      doc.text('Desenvolvimento', 18, 182)
+      doc.setFontSize(11)
+      const devBody = doc.splitTextToSize('O tema ressalta a importância da interação entre teoria e prática, destacando a relevância do contexto escolar angolano, os desafios reais de implementação e as soluções adequadas para uma educação mais eficaz.', 160)
+      doc.text(devBody, 18, 190)
 
-    doc.setFontSize(13)
-    doc.text('Conclusão', 18, 228)
-    doc.setFontSize(11)
-    const conclusionBody = doc.splitTextToSize(form.conclusion, 160)
-    doc.text(conclusionBody, 18, 236)
+      doc.setFontSize(13)
+      doc.text('Conclusão', 18, 228)
+      doc.setFontSize(11)
+      const conclusionBody = doc.splitTextToSize(form.conclusion, 160)
+      doc.text(conclusionBody, 18, 236)
 
-    doc.setFillColor(240, 244, 248)
-    doc.roundedRect(18, 260, 72, 18, 4, 4, 'F')
-    doc.setTextColor(17, 24, 39)
-    doc.text('Validado por QR', 30, 272)
-    doc.setTextColor(17, 24, 39)
-    doc.setFontSize(10)
-    doc.text('Documento gerado pela plataforma Kifula Premium', 18, pageHeight - 20)
+      doc.setFillColor(240, 244, 248)
+      doc.roundedRect(18, 260, 72, 18, 4, 4, 'F')
+      doc.setTextColor(17, 24, 39)
+      doc.text('Validado por QR', 30, 272)
+      doc.setTextColor(17, 24, 39)
+      doc.setFontSize(10)
+      doc.text('Documento gerado pela plataforma Kifula Premium', 18, pageHeight - 20)
 
-    const qrValue = `Kifula|${selectedSchool.name}|${form.title}|${form.studentName}`
-    doc.addImage(
-      `data:image/svg+xml;charset=utf-8,${encodeURIComponent(`
-        <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
-          <rect width="100" height="100" fill="white"/>
-          <g fill="black">
-            <rect x="10" y="10" width="10" height="10"/><rect x="30" y="10" width="10" height="10"/><rect x="50" y="10" width="10" height="10"/><rect x="70" y="10" width="10" height="10"/>
-            <rect x="10" y="30" width="10" height="10"/><rect x="50" y="30" width="10" height="10"/><rect x="70" y="30" width="10" height="10"/>
-            <rect x="10" y="50" width="10" height="10"/><rect x="30" y="50" width="10" height="10"/><rect x="50" y="50" width="10" height="10"/><rect x="70" y="50" width="10" height="10"/>
-            <rect x="10" y="70" width="10" height="10"/><rect x="30" y="70" width="10" height="10"/><rect x="50" y="70" width="10" height="10"/><rect x="70" y="70" width="10" height="10"/>
-          </g>
-        </svg>
-      `)}`,
-      'PNG',
-      pageWidth - 36,
-      258,
-      26,
-      26,
-    )
-
-    doc.save(`${form.title.toLowerCase().replace(/\s+/g, '-')}.pdf`)
-    useCredits(5)
-    console.log(qrValue)
+      doc.save(`${form.title.toLowerCase().replace(/\s+/g, '-')}.pdf`)
+      useCredits(5)
+    } catch (error) {
+      console.error('Erro ao gerar PDF:', error)
+      alert('Erro ao gerar o PDF. Tente novamente.')
+    }
   }
 
   return (
@@ -353,27 +341,33 @@ function App() {
           </div>
 
           <div className="card-grid">
-            {filteredThemes.map((theme) => (
-              <article key={theme.id} className="theme-card">
-                <div className="theme-tag-row">
-                  <span className={`tag ${theme.premium ? 'premium' : 'free'}`}>{theme.premium ? 'Premium' : 'Grátis'}</span>
-                  <span className="tag neutral">{theme.province}</span>
-                </div>
-                <h3>{theme.title}</h3>
-                <p>{theme.description}</p>
-                <div className="meta-row">
-                  <span>{theme.school}</span>
-                  <span>{theme.discipline}</span>
-                </div>
-                <div className="meta-row small">
-                  <span>{theme.className}</span>
-                  <span>{theme.type}</span>
-                </div>
-                <button className="secondary-btn full" onClick={() => applyTheme(theme)}>
-                  Usar tema
-                </button>
-              </article>
-            ))}
+            {filteredThemes.length > 0 ? (
+              filteredThemes.map((theme) => (
+                <article key={theme.id} className="theme-card">
+                  <div className="theme-tag-row">
+                    <span className={`tag ${theme.premium ? 'premium' : 'free'}`}>{theme.premium ? 'Premium' : 'Grátis'}</span>
+                    <span className="tag neutral">{theme.province}</span>
+                  </div>
+                  <h3>{theme.title}</h3>
+                  <p>{theme.description}</p>
+                  <div className="meta-row">
+                    <span>{theme.school}</span>
+                    <span>{theme.discipline}</span>
+                  </div>
+                  <div className="meta-row small">
+                    <span>{theme.className}</span>
+                    <span>{theme.type}</span>
+                  </div>
+                  <button className="secondary-btn full" onClick={() => applyTheme(theme)}>
+                    Usar tema
+                  </button>
+                </article>
+              ))
+            ) : (
+              <div style={{ gridColumn: '1 / -1', padding: '20px', textAlign: 'center', color: '#cbd5e1' }}>
+                <p>Nenhum tema encontrado com os filtros selecionados.</p>
+              </div>
+            )}
           </div>
         </section>
 
