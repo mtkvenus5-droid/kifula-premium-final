@@ -36,6 +36,14 @@ type Plan = {
   recommended?: boolean
 }
 
+type PaymentPlan = {
+  id: number
+  credits: number
+  price: string
+  priceAOA: number
+  savings?: string
+}
+
 const schools: School[] = [
   { id: 1, name: 'Colégio Politécnico The Vision', province: 'Luanda', municipality: 'Viana', type: 'Privado', level: 'Secundário', city: 'Luanda', color: '#4f46e5' },
   { id: 2, name: 'Escola Secundária 11 de Novembro', province: 'Luanda', municipality: 'Ingombota', type: 'Público', level: 'Secundário', city: 'Luanda', color: '#0f766e' },
@@ -74,12 +82,19 @@ const themes: Theme[] = [
 
 const plans: Plan[] = [
   { id: 1, name: 'Básico', price: 'Grátis', description: 'Pesquisa simples e até 1 trabalho', features: ['1 tema grátis', 'Busca básica', 'Exportação simples'] },
-  { id: 2, name: 'Estudante', price: '4.500 Kz/mês', description: 'Para alunos em crescimento', features: ['Todos os temas básicos', '5 PDFs/mês', 'Uso de 3 templates'], recommended: true },
-  { id: 3, name: 'Premium', price: '9.500 Kz/mês', description: 'Para trabalhos completos e profissionais', features: ['Temas premium ilimitados', 'PDF completo', 'QR Code e assinatura', 'Suporte prioritário'] },
-  { id: 4, name: 'Instituição', price: '29.500 Kz/mês', description: 'Para escolas e professores', features: ['Múltiplos usuários', 'Biblioteca institucional', 'Geração em lote'] },
+  { id: 2, name: 'Estudante', price: '4.500 Kz/mês', description: 'Para alunos em crescimento', features: ['Todos os temas básicos', '5 PDFs/mês', 'Suporte básico'], recommended: true },
+  { id: 3, name: 'Premium', price: '9.500 Kz/mês', description: 'Para trabalhos completos e profissionais', features: ['Temas premium ilimitados', 'PDFs ilimitados', 'QR Code e validação', 'Suporte prioritário'] },
+  { id: 4, name: 'Instituição', price: '29.500 Kz/mês', description: 'Para escolas e professores', features: ['Múltiplos usuários', 'Biblioteca institucional', 'Análise de uso'] },
 ]
 
 const paymentMethods = ['M-Pesa', 'Transferência Bancária', 'Moedim', 'E-Mola', 'Cartão']
+
+const creditPlans: PaymentPlan[] = [
+  { id: 1, credits: 10, price: '1.000 Kz', priceAOA: 1000 },
+  { id: 2, credits: 50, price: '4.500 Kz', priceAOA: 4500, savings: 'Economiza 500 Kz' },
+  { id: 3, credits: 100, price: '8.500 Kz', priceAOA: 8500, savings: 'Economiza 1.500 Kz' },
+  { id: 4, credits: 200, price: '15.000 Kz', priceAOA: 15000, savings: 'Economiza 5.000 Kz' },
+]
 
 const provinceList = ['Todos', ...new Set(schools.map((school) => school.province))]
 const typeList = ['Todos', ...new Set(schools.map((school) => school.type))]
@@ -114,6 +129,8 @@ function App() {
   const [selectedDiscipline, setSelectedDiscipline] = useState('Todos')
   const [selectedSchool, setSelectedSchool] = useState<School>(schools[0])
   const [credits, setCredits] = useState(18)
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('M-Pesa')
+  const [paymentMessage, setPaymentMessage] = useState('')
 
   const [form, setForm] = useState({
     title: 'Impacto da tecnologia na educação',
@@ -235,6 +252,15 @@ function App() {
       console.error('Erro ao gerar PDF:', error)
       alert('Erro ao gerar o PDF. Tente novamente.')
     }
+  }
+
+  const processPayment = (plan: PaymentPlan) => {
+    setPaymentMessage(`Processando pagamento de ${plan.price} via ${selectedPaymentMethod}...`)
+    setTimeout(() => {
+      setCredits((prev) => prev + plan.credits)
+      setPaymentMessage(`✓ Pagamento de ${plan.price} confirmado! ${plan.credits} créditos adicionados.`)
+      setTimeout(() => setPaymentMessage(''), 3000)
+    }, 2000)
   }
 
   return (
@@ -504,16 +530,95 @@ function App() {
 
           <div className="payment-layout">
             <div className="payment-methods">
-              {paymentMethods.map((method) => (
-                <button key={method} className="method-btn">{method}</button>
-              ))}
+              <label style={{ marginBottom: '20px' }}>
+                <strong>Selecione o método de pagamento:</strong>
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '10px', marginBottom: '30px' }}>
+                {paymentMethods.map((method) => (
+                  <button
+                    key={method}
+                    className={`method-btn ${selectedPaymentMethod === method ? 'active' : ''}`}
+                    onClick={() => setSelectedPaymentMethod(method)}
+                    style={{
+                      padding: '12px',
+                      border: selectedPaymentMethod === method ? '2px solid #4f46e5' : '1px solid #e2e8f0',
+                      borderRadius: '8px',
+                      background: selectedPaymentMethod === method ? '#eef2ff' : 'white',
+                      cursor: 'pointer',
+                      fontWeight: selectedPaymentMethod === method ? 'bold' : 'normal',
+                      transition: 'all 0.3s ease'
+                    }}
+                  >
+                    {method}
+                  </button>
+                ))}
+              </div>
             </div>
 
             <div className="credit-packs">
-              <button onClick={() => setCredits((prev) => prev + 10)}>+10 créditos</button>
-              <button onClick={() => setCredits((prev) => prev + 50)}>+50 créditos</button>
-              <button onClick={() => setCredits((prev) => prev + 100)}>+100 créditos</button>
-              <button onClick={() => setCredits((prev) => prev + 200)}>+200 créditos</button>
+              <label style={{ marginBottom: '20px', display: 'block' }}>
+                <strong>Escolha um pacote de créditos:</strong>
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px' }}>
+                {creditPlans.map((plan) => (
+                  <div
+                    key={plan.id}
+                    style={{
+                      padding: '16px',
+                      border: '1px solid #e2e8f0',
+                      borderRadius: '8px',
+                      background: '#f8fafc',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#4f46e5', marginBottom: '8px' }}>
+                      {plan.credits}
+                    </div>
+                    <div style={{ fontSize: '14px', color: '#64748b', marginBottom: '8px' }}>créditos</div>
+                    <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#1e293b', marginBottom: '12px' }}>
+                      {plan.price}
+                    </div>
+                    {plan.savings && (
+                      <div style={{ fontSize: '12px', color: '#22c55e', marginBottom: '12px', fontWeight: 'bold' }}>
+                        {plan.savings}
+                      </div>
+                    )}
+                    <button
+                      onClick={() => processPayment(plan)}
+                      style={{
+                        width: '100%',
+                        padding: '10px',
+                        background: '#4f46e5',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontWeight: 'bold',
+                        transition: 'background 0.3s'
+                      }}
+                      onMouseOver={(e) => e.currentTarget.style.background = '#4338ca'}
+                      onMouseOut={(e) => e.currentTarget.style.background = '#4f46e5'}
+                    >
+                      Comprar
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              {paymentMessage && (
+                <div style={{
+                  marginTop: '20px',
+                  padding: '16px',
+                  background: '#ecfdf5',
+                  border: '1px solid #d1fae5',
+                  borderRadius: '8px',
+                  color: '#047857',
+                  textAlign: 'center',
+                  fontWeight: 'bold'
+                }}>
+                  {paymentMessage}
+                </div>
+              )}
             </div>
           </div>
         </section>
