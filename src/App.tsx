@@ -64,7 +64,7 @@ const disciplines = ['Matemática', 'Física', 'Química', 'Biologia', 'Históri
 const themes: Theme[] = [
   { id: 1, title: 'A importância da tecnologia na educação', school: 'Colégio Politécnico The Vision', discipline: 'Informática', province: 'Luanda', level: '12ª Classe', type: 'Privado', premium: false, description: 'Tema moderno com foco em inovação digital e aprendizagem.', className: '12ª', year: '2025' },
   { id: 2, title: 'Desafios ambientais em Luanda', school: 'Escola Secundária 11 de Novembro', discipline: 'Geografia', province: 'Luanda', level: '11ª Classe', type: 'Público', premium: true, description: 'Leitura crítica sobre urbanização e sustentabilidade.', className: '11ª', year: '2025' },
-  { id: 3, title: 'A energia renovável e o futuro do país', school: 'Escola Secundária de Benguela', discipline: 'Física', province: 'Benguela', level: '12ª Classe', type: 'Público', premium: false, description: 'Tema experimental com aplicabilidade econômica e ecológica.', className: '12ª', year: '2025' },
+  { id: 3, title: 'A energia renovável e o futuro do país', school: 'Escola Secundária de Benguela', discipline: 'Física', province: 'Benguela', level: '12ª Classe', type: 'Público', premium: false, description: 'Tema experimental com aplicabilidade económica e ecológica.', className: '12ª', year: '2025' },
   { id: 4, title: 'O papel da educação no desenvolvimento social', school: 'Instituto Superior de Ciências da Educação', discipline: 'História', province: 'Luanda', level: '11ª Classe', type: 'Público', premium: true, description: 'Aprofundamento histórico e pedagógico.', className: '11ª', year: '2025' },
   { id: 5, title: 'Matemática financeira para jovens', school: 'Escola de Ciências e Tecnologia', discipline: 'Matemática', province: 'Luanda', level: '12ª Classe', type: 'Privado', premium: false, description: 'Aplicações práticas do cálculo financeiro.', className: '12ª', year: '2025' },
   { id: 6, title: 'A influência da cultura angolana na literatura', school: 'Colégio Nossa Senhora da Conceição', discipline: 'Literatura', province: 'Luanda', level: '12ª Classe', type: 'Privado', premium: true, description: 'Tema voltado para análise literária, cultura e identidade.', className: '12ª', year: '2025' },
@@ -144,12 +144,6 @@ function App() {
       return matchesSearch && matchesProvince && matchesType && matchesDiscipline
     })
   }, [searchTerm, selectedProvince, selectedType, selectedDiscipline])
-
-  const displayedSchools = schools.filter((school) => {
-    const provinceOk = selectedProvince === 'Todos' || school.province === selectedProvince
-    const typeOk = selectedType === 'Todos' || school.type === selectedType
-    return provinceOk && typeOk
-  })
 
   const applyTheme = (theme: Theme) => {
     const school = schools.find((item) => item.name === theme.school) ?? schools[0]
